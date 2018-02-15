@@ -38,6 +38,18 @@ describe('Trie', () => {
       expect(trie.wordCounter).to.equal(1)
     })
 
+   it('Should not increase the wordCounter if the word is already created', () => {
+    expect(trie.wordCounter).to.equal(0)
+      
+    trie.insert('pizza');
+
+    expect(trie.wordCounter).to.equal(1)
+
+    trie.insert('pizza');
+
+    expect(trie.wordCounter).to.equal(1)
+   })
+
     it('Should create keys in the children object of the frist letter', () => {
        trie.insert('pizza');
        trie.insert('monkey');
@@ -64,6 +76,7 @@ describe('Trie', () => {
      let suggestions = trie.suggest('do');
      expect(suggestions).to.eql(['doggo'])
    })
+
    it('should suggest multiple words', () => {
      trie.insert('doggo');
      trie.insert('dog');
@@ -86,8 +99,12 @@ describe('Trie', () => {
      expect(options.some(current => current === 'piano')).to.be.true
      let tWord = trie.suggest('to');
      expect(tWord.some(current => current === 'tomato')).to.be.true
+     expect(tWord.some(current => current === 'dog')).to.be.false;
    })
+
+
  })
+
   describe('POPULATE', () => {
     it('should Populate a dictionary', () => {
       expect(trie.wordCounter).to.equal(0);
@@ -116,18 +133,30 @@ describe('Trie', () => {
        expect(trie.suggest('piz')).to.deep.equal(['pizzeria', 'pize', 'pizza', 'pizzicato', 'pizzle'])
       
     })
-  })
 
-  describe('delete', () => {
-    it('Should should increase its popularity when it is delete', function(){
+    it('Should increase the increase the popularity, if the node is selected', () => {
 
       trie.populate(dictionary);
 
+      trie.select('dog');
+
+      expect(trie.children['d'].children['o'].children['g'].popularity).to.equal(1);
+    })
+  })
+
+  describe('delete', () => {
+    it('Should should its delete  its node form the trie when it is delete from being inserted', function(){
+
+      trie.populate(dictionary);
+      
       expect(trie.suggest('piz')).to.deep.equal(['pize', 'pizza', 'pizzeria', 'pizzicato', 'pizzle']);
+      expect(trie.wordCounter).to.equal(235886)
 
       trie.delete('pizzeria');
 
        expect(trie.suggest('piz')).to.deep.equal(['pize', 'pizza', 'pizzicato', 'pizzle'])
+
+       expect(trie.wordCounter).to.deep.equal(235885)
       
     })
   })
